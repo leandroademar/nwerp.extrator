@@ -1,0 +1,23 @@
+﻿version: '3.8'
+
+services:
+  nwapi-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nwerp.api
+    environment:
+      - ORACLE_DB_HOST=${ORACLE_DB_HOST}
+      - ORACLE_DB_PORT=${ORACLE_DB_PORT}
+      - ORACLE_DB_USER=${ORACLE_DB_USER}
+      - ORACLE_DB_PASSWORD=${ORACLE_DB_PASSWORD}
+      - ORACLE_DB_SERVICE=${ORACLE_DB_SERVICE}
+      - ORACLE_DB=${ORACLE_DB}
+      - SQL_SERVER_HOST=${SQL_SERVER_HOST}
+      - SQL_SERVER_DB=${SQL_SERVER_DB}
+      - SQL_SERVER_USER=${SQL_SERVER_USER}
+      - SQL_SERVER_PASSWORD=${SQL_SERVER_PASSWORD}
+      - JOB_RUN=${JOB_RUN}
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "${API_PORT}:8080"
