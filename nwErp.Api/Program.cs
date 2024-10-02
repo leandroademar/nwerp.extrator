@@ -10,6 +10,7 @@ using nwErp.Api.Configuration;
 using nwErp.Api.Jobs;
 using nwErp.Api.Persistencia;
 using nwErp.Api.Persistencia.Oracle;
+using Supabase; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,8 @@ builder.Services.AddSingleton<IPersistencia>(provider =>
     var connectionString = configuration.GetConnectionString("OracleDbConnection");
     return PersistenciaOracle.NovaInstancia(connectionString);
 });
+
+// Registrar inMemory
 MemoryStorageOptions inMemory = new MemoryStorageOptions()
 {
     JobExpirationCheckInterval = TimeSpan.FromMinutes(2.0),
@@ -48,6 +51,24 @@ builder.Services.AddHangfire(config =>
 });
         
 builder.Services.AddHangfireServer();
+
+
+// Configurar o Supabase
+var supabaseUrl = Env.GetString("SUPABASE_URL");
+var supabaseKey = Env.GetString("SUPABASE_KEY");
+
+var supabaseOptions = new SupabaseOptions
+{
+    // Defina as opções necessárias aqui
+};
+
+var supabaseClient = new Supabase.Client(supabaseUrl, supabaseKey, supabaseOptions);
+
+// Inicialize o cliente Supabase de forma assíncrona
+await supabaseClient.InitializeAsync();
+
+// Registrar o Supabase.Client como Singleton
+builder.Services.AddSingleton(supabaseClient);
 
 var jobsToRun = Env.GetString("JOB_RUN")?.Split(',');
 if (jobsToRun != null)
@@ -72,6 +93,7 @@ if (jobsToRun != null)
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
+
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[] { new HangFireDashboard.MyAuthorizationFilter() }
