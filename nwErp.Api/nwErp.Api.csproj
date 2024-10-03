@@ -35,9 +35,9 @@
     </ItemGroup>
     
     <ItemGroup>
-      <None Include="Script\*.sql">
+      <Folder Include="Script\*.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+      </Folder>
       <None Remove="Properties\launchSettings.json" />
     </ItemGroup>
     

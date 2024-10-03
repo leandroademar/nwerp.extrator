@@ -43,7 +43,7 @@ COPY Scripts ./Scripts
 RUN dotnet restore
 
 COPY . .
-WORKDIR /app/nwErp.Api
+WORKDIR /app
 RUN dotnet publish -c Release -o /app/publish
 
 # Etapa de Runtime
