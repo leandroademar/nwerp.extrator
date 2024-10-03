@@ -17,7 +17,7 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
-
+arq_data/
 
 # NuGet
 *.nupkg
@@ -35,7 +35,7 @@ ehthumbs.db
 
 # Folder config file
 desktop.ini
-Supa.db/arq_data/
+
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
