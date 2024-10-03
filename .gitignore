@@ -50,12 +50,13 @@ $RECYCLE.BIN/
 .Spotlight-V100
 .Trashes
 Icon?
+*.env
 ._.DS_Store
 
 # Rider
 .idea/
 *.sln.iml
-
+.env
 # JetBrains Rider
 .idea/
 *.sln.iml
