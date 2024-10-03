@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y \
     zlib1g \
     curl \
     gnupg2 \
+    telnet \
     apt-transport-https \
     gnupg && \
     rm -rf /var/lib/apt/lists/*

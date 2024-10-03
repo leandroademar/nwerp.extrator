@@ -68,13 +68,15 @@ namespace nwErp.Api.Jobs
                 using (var sqlConnection = new SqlConnection(connectionTerrazzo))
                 {
                     await sqlConnection.OpenAsync(cancellationToken);
-                    var data = await sqlConnection.QueryAsync<DTI_TERRAZZO_CONTROLECX>(ExecutaComandoScript("Query_ControleCX"));
+                    var data = await sqlConnection.QueryAsync<DTI_TERRAZZO_CONTROLECX>(
+                        ExecutaComandoScript("Query_ControleCX"));
 
                     if (data != null && data.Any())
                     {
                         foreach (var it in data)
                         {
-                            var lista = _persistencia.CarregarLista(new PCFECHAMENTOMOVCX(), (PCFECHAMENTOMOVCX pcmovcx) => pcmovcx.Numfechamentomovcx == it.ID_CAIXA);
+                            var lista = _persistencia.CarregarLista(new PCFECHAMENTOMOVCX(),
+                                (PCFECHAMENTOMOVCX pcmovcx) => pcmovcx.Numfechamentomovcx == it.ID_CAIXA);
 
                             _pcmovcx = lista?.FirstOrDefault() ?? new PCFECHAMENTOMOVCX();
 
@@ -83,7 +85,7 @@ namespace nwErp.Api.Jobs
                                 // A instância já existe, não é necessário continuar
                                 if (_pcmovcx.Dtfechamento == null && it.DATAFIM != null)
                                 {
-                                    
+
                                     _pcmovcx.Dtfechamento = it.DATAFIM;
                                     _persistencia.Persistir(TipoPersistencia.ALTERAR, _pcmovcx);
                                 }
@@ -93,7 +95,7 @@ namespace nwErp.Api.Jobs
 
 
                             decimal numeroCarregamento = 0;
-                            
+
                             _pcmovcx.Codfilial = "2";
                             _pcmovcx.Codfunccx = it.MATRICULA;
                             _pcmovcx.Numcaixa = 300;
@@ -114,13 +116,21 @@ namespace nwErp.Api.Jobs
                     {
                         context.WriteLine("Nenhum dado encontrado na consulta SQL.");
                     }
-                    
+
                 }
             }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"Erro ao conectar ao SQL Server: {ex.Message}");
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
+                
             catch (Exception ex)
             {
                 context.WriteLine($"Erro: {ex.Message}");
-                UtilidadeLogConsole.LogConsole($"Falha ao gravar CONTROLECX: {ex.StackTrace}", nameof(GetControleCxAsync), UtilidadeLogConsole.TipoMensagem.Erro);
+                UtilidadeLogConsole.LogConsole($"Falha ao gravar CONTROLECX: {ex.StackTrace}",
+                    nameof(GetControleCxAsync), UtilidadeLogConsole.TipoMensagem.Erro);
                 cancellationToken.ThrowIfCancellationRequested();
             }
         }
