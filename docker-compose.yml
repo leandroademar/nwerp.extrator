@@ -19,7 +19,7 @@ services:
       - "5432:5432"
       - "8000:8000"
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./Supa.db/data:/var/lib/postgresql/data
 
   nwapi-app:
     image: nwerp-api:1.0.0
