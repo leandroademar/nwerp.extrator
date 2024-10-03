@@ -12,11 +12,11 @@ ARG envoy_release=1.28.0
 # Update `gateway-28` in the URL below if upgrading above v2.8.x.
 ARG kong_release=2.8.1
 
-FROM supabase/postgres:${postgres_version} as base
+FROM supabase/postgres:${postgres_version} AS base
 ARG TARGETARCH
 ARG postgresql_major
 
-FROM base as builder
+FROM base AS builder
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
     postgresql-server-dev-${postgresql_major} \
@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
 ####################
 # Install pgbouncer
 ####################
-FROM builder as pgbouncer-source
+FROM builder AS pgbouncer-source
 # Download and extract
 ARG pgbouncer_release
 ADD "https://www.pgbouncer.org/downloads/files/${pgbouncer_release}/pgbouncer-${pgbouncer_release}.tar.gz" /tmp/pgbouncer.tar.gz
@@ -46,7 +46,7 @@ RUN make -j$(nproc)
 # Create debian package
 RUN checkinstall -D --install=no --fstrans=no --backup=no --pakdir=/tmp --requires=libevent-2.1-7 --nodoc
 
-FROM base as pgbouncer
+FROM base AS pgbouncer
 # Download pre-built packages
 RUN apt-get update && apt-get install -y --no-install-recommends --download-only \
     pgbouncer \
@@ -56,22 +56,22 @@ RUN mv /var/cache/apt/archives/*.deb /tmp/
 ####################
 # Install PostgREST
 ####################
-FROM postgrest/postgrest:v${postgrest_release} as pgrst
+FROM postgrest/postgrest:v${postgrest_release} AS pgrst
 
 ####################
 # Install GoTrue
 ####################
-FROM supabase/gotrue:v${gotrue_release} as gotrue
+FROM supabase/gotrue:v${gotrue_release} AS gotrue
 
 ####################
 # Install Envoy
 ####################
-FROM envoyproxy/envoy:v${envoy_release} as envoy
+FROM envoyproxy/envoy:v${envoy_release} AS envoy
 
 ####################
 # Install Kong
 ####################
-FROM base as kong
+FROM base AS kong
 ARG kong_release
 ADD "https://packages.konghq.com/public/gateway-28/deb/ubuntu/pool/focal/main/k/ko/kong_${kong_release}/kong_${kong_release}_${TARGETARCH}.deb" \
     /tmp/kong.deb
@@ -79,7 +79,7 @@ ADD "https://packages.konghq.com/public/gateway-28/deb/ubuntu/pool/focal/main/k/
 ####################
 # Install admin api
 ####################
-FROM base as adminapi
+FROM base AS adminapi
 ARG adminapi_release
 ADD "https://supabase-public-artifacts-bucket.s3.amazonaws.com/supabase-admin-api/v${adminapi_release}/supabase-admin-api_${adminapi_release}_linux_${TARGETARCH}.tar.gz" /tmp/supabase-admin-api.tar.gz
 RUN tar -xvf /tmp/supabase-admin-api.tar.gz -C /tmp && \
@@ -88,7 +88,7 @@ RUN tar -xvf /tmp/supabase-admin-api.tar.gz -C /tmp && \
 ####################
 # Install admin mgr
 ####################
-FROM base as adminmgr
+FROM base AS adminmgr
 ARG adminmgr_release
 ADD "https://supabase-public-artifacts-bucket.s3.amazonaws.com/admin-mgr/v${adminmgr_release}/admin-mgr_${adminmgr_release}_linux_${TARGETARCH}.tar.gz" /tmp/admin-mgr.tar.gz
 RUN tar -xvf /tmp/admin-mgr.tar.gz -C /tmp && \
@@ -97,7 +97,7 @@ RUN tar -xvf /tmp/admin-mgr.tar.gz -C /tmp && \
 ####################
 # Install Prometheus Exporter
 ####################
-FROM base as exporter
+FROM base AS exporter
 ARG postgres_exporter_release
 ADD "https://github.com/prometheus-community/postgres_exporter/releases/download/v${postgres_exporter_release}/postgres_exporter-${postgres_exporter_release}.linux-${TARGETARCH}.tar.gz" /tmp/postgres_exporter.tar.gz
 RUN tar -xvf /tmp/postgres_exporter.tar.gz -C /tmp --strip-components 1 && \
@@ -106,14 +106,14 @@ RUN tar -xvf /tmp/postgres_exporter.tar.gz -C /tmp --strip-components 1 && \
 ####################
 # Install vector
 ####################
-FROM base as vector
+FROM base AS vector
 ARG vector_release
 ADD "https://packages.timber.io/vector/${vector_release}/vector_${vector_release}-1_${TARGETARCH}.deb" /tmp/vector.deb
 
 ####################
 # Install supervisord
 ####################
-FROM base as supervisor
+FROM base AS supervisor
 # Download pre-built packages
 RUN apt-get update -y && apt-get install -y --no-install-recommends --download-only \
     supervisor \
@@ -123,7 +123,7 @@ RUN mv /var/cache/apt/archives/*.deb /tmp/
 ####################
 # Create the final image for production
 ####################
-FROM base as production
+FROM base AS production
 
 # Copy dependencies from previous build stages
 COPY --from=pgbouncer /tmp/*.deb /tmp/
