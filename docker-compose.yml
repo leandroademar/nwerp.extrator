@@ -18,8 +18,15 @@ services:
     ports:
       - "5432:5432"
       - "8000:8000"
+      - "8443:8443"
+      - "3000:3000"
+      - "3001:3001"
+      - "3006:3006"
+      - "9187:9187"
+      - "9999:9999"
+      - "8085:8085"
     volumes:
-      - .arq_data:/var/lib/postgresql/data
+      - arq_data:/var/lib/postgresql/data
 
   nwapi-app:
     image: nwerp-api:1.0.0
