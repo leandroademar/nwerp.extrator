@@ -305,6 +305,7 @@ COPY entrypoint.sh /usr/local/bin/
 COPY postgres-entrypoint.sh /usr/local/bin/
 COPY shutdown.sh /usr/local/bin/supa-shutdown.sh
 COPY run-logrotate.sh /usr/local/bin/run-logrotate.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/supa-shutdown.sh /usr/local/bin/run-logrotate.sh /usr/local/bin/configure-shim.sh 
 
 ENTRYPOINT [ "/usr/bin/dumb-init" ]
 
