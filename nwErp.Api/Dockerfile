@@ -38,9 +38,8 @@ RUN wget -q https://download.oracle.com/otn_software/linux/instantclient/1923000
 
 # Copiar e restaurar dependências
 COPY *.sln ./
-COPY nwErp.Api/*.csproj ./nwErp.Api/
-COPY nwErp.Api/Scripts ./nwErp.Api/Scripts
-COPY . ./
+COPY *.csproj ./
+COPY Scripts ./Scripts
 RUN dotnet restore
 
 COPY . .

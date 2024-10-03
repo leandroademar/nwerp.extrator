@@ -6,7 +6,7 @@ services:
     build:
       context: ./Supa.db
       dockerfile: Dockerfile
-    container_name: supabase.db
+    container_name: supa.db
     environment:
       - POSTGRES_PASSWORD=postgres
       - JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long

@@ -196,9 +196,9 @@ COPY --chmod=644 docker/all-in-one/etc/sudoers.d /etc/sudoers.d/
 COPY --chown=adminapi:adminapi docker/all-in-one/opt/pg_egress_collect /opt/pg_egress_collect
 
 # Customizations for pgbouncer
-COPY ./etc/pgbouncer /etc/pgbouncer
-COPY ./etc/pgbouncer-custom /etc/pgbouncer-custom
-COPY ./etc/tmpfiles.d /etc/tmpfiles.d
+COPY etc/pgbouncer /etc/pgbouncer
+COPY etc/pgbouncer-custom /etc/pgbouncer-custom
+COPY etc/tmpfiles.d /etc/tmpfiles.d
 
 # Customizations for postgres
 COPY --chown=postgres:postgres docker/all-in-one/etc/postgresql/pg_hba.conf /etc/postgresql/
@@ -210,8 +210,8 @@ COPY --chown=postgres:postgres docker/all-in-one/etc/postgresql.schema.sql /etc/
 COPY --chown=postgres:postgres docker/all-in-one/opt/postgres_exporter/queries.yml /opt/postgres_exporter/queries.yml
 
 # Customizations for fail2ban
-COPY ./etc/fail2ban/filter.d /etc/fail2ban/filter.d/
-COPY ./etc/fail2ban/jail.d /etc/fail2ban/jail.d/
+COPY etc/fail2ban/filter.d /etc/fail2ban/filter.d/
+COPY etc/fail2ban/jail.d /etc/fail2ban/jail.d/
 
 # Customizations for postgrest
 COPY --chown=postgrest:postgrest docker/all-in-one/etc/postgrest/bootstrap.sh /etc/postgrest/bootstrap.sh
@@ -219,11 +219,11 @@ COPY --chown=postgrest:postgrest docker/all-in-one/etc/postgrest/base.conf /etc/
 COPY --chown=postgrest:postgrest docker/all-in-one/etc/postgrest/generated.conf /etc/postgrest/generated.conf
 
 # Customizations for logrotate
-COPY ./etc/logrotate.d/walg.conf /etc/logrotate.d/walg.conf
-COPY ./etc/logrotate.d/postgresql.conf /etc/logrotate.d/postgresql.conf
+COPY etc/logrotate.d/walg.conf /etc/logrotate.d/walg.conf
+COPY etc/logrotate.d/postgresql.conf /etc/logrotate.d/postgresql.conf
 
 # Customizations for gotrue
-COPY ./etc/gotrue.env /etc/gotrue.env
+COPY etc/gotrue.env /etc/gotrue.env
 
 # Customizations for envoy
 ARG envoy_release
@@ -232,18 +232,18 @@ COPY --chmod=775 --chown=envoy:envoy ansible/files/envoy_config/ /etc/envoy/
 COPY --chmod=755 --chown=envoy:envoy ansible/files/start-envoy.sh /opt/
 
 # Customizations for kong
-COPY ./etc/kong/kong.conf /etc/kong/kong.conf
-COPY ./etc/kong/kong.yml /etc/kong/kong.yml
+COPY etc/kong/kong.conf /etc/kong/kong.conf
+COPY etc/kong/kong.yml /etc/kong/kong.yml
 
 # Customizations for vector
 COPY --chown=vector:vector docker/all-in-one/etc/vector/vector.yaml /etc/vector/vector.yaml
 
 # Customizations for supervisor
-COPY ./etc/supervisor /etc/supervisor
+COPY etc/supervisor /etc/supervisor
 
 # Customizations for supa-shutdown
 COPY --chown=adminapi:adminapi docker/all-in-one/etc/supa-shutdown /etc/supa-shutdown
-COPY ./configure-shim.sh /usr/local/bin/configure-shim.sh
+COPY configure-shim.sh /usr/local/bin/configure-shim.sh
 
 # Configure service ports
 ENV PGRST_SERVER_PORT=3000
@@ -297,14 +297,14 @@ RUN chown -R adminapi:adminapi /etc/adminapi
 RUN sed -i "s;#include = '/etc/postgresql-custom/generated-optimizations.conf';include = '/etc/postgresql-custom/generated-optimizations.conf';" /etc/postgresql/postgresql.conf
 
 # Add healthcheck and entrypoint scripts
-COPY ./healthcheck.sh /usr/local/bin/
+COPY healthcheck.sh /usr/local/bin/
 HEALTHCHECK --interval=3s --timeout=2s --start-period=4s --retries=10 CMD [ "healthcheck.sh" ]
 
-COPY ./init /init
-COPY ./entrypoint.sh /usr/local/bin/
-COPY ./postgres-entrypoint.sh /usr/local/bin/
-COPY ./shutdown.sh /usr/local/bin/supa-shutdown.sh
-COPY ./run-logrotate.sh /usr/local/bin/run-logrotate.sh
+COPY init /init
+COPY entrypoint.sh /usr/local/bin/
+COPY postgres-entrypoint.sh /usr/local/bin/
+COPY shutdown.sh /usr/local/bin/supa-shutdown.sh
+COPY run-logrotate.sh /usr/local/bin/run-logrotate.sh
 
 ENTRYPOINT [ "/usr/bin/dumb-init" ]
 
