@@ -18,17 +18,15 @@ using Supabase;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar as Connection Strings
-var configuration = builder.Configuration;
-
-configuration
+builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddEnvironmentVariables(); // Adiciona as variáveis de ambiente
+    .AddEnvironmentVariables();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.Configure<ConnectionStrings>(configuration.GetSection("ConnectionStrings"));
+builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));
 
 // Registrar DbSessions
 builder.Services.AddSingleton<DbSessionTerrazzo>();
@@ -60,7 +58,7 @@ builder.Services.AddHangfire(config =>
         
 builder.Services.AddHangfireServer();
 
-var jobsToRun = configuration.GetSection("JobsToRun").Get<List<string>>();
+var jobsToRun = builder.Configuration.GetSection("JobsToRun").Get<List<string>>();
 if (jobsToRun != null)
 {
     foreach (var jobName in jobsToRun)

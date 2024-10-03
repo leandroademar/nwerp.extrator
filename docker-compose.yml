@@ -10,9 +10,6 @@ services:
       - ConnectionStrings__OracleDbConnection=User Id=${ORACLE_DB_USER};Password=${ORACLE_DB_PASSWORD};Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_DB_HOST})(PORT=${ORACLE_DB_PORT})))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DB_SERVICE})))      
       - ConnectionStrings__SqlServerConnection=Server=${SQL_SERVER_HOST};Database=${SQL_SERVER_DB};User Id=${SQL_SERVER_USER};Password=${SQL_SERVER_PASSWORD}
       - JobsToRun__0=${JOB_RUN_0}
-      - JobsToRun__1=${JOB_RUN_1}
-      - JobsToRun__2=${JOB_RUN_2}
-      - JobsToRun__3=${JOB_RUN_3}
       - ASPNETCORE_ENVIRONMENT=Development
       - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=${DOTNET_SYSTEM_GLOBALIZATION_INVARIANT}
       - TZ=${TZ}
