@@ -33,8 +33,9 @@
     <ItemGroup>
       <Folder Include="Services\" />
     </ItemGroup>
+    
     <ItemGroup>
-      <None Update="Script\**\*.*">
+      <None Include="Script\*.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Remove="Properties\launchSettings.json" />

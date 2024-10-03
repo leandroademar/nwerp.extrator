@@ -7,7 +7,7 @@ public class JobTerrazzoAjusteNotafiscal : IHostedService
         throw new NotImplementedException();
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken cancellationToken) 
     {
         throw new NotImplementedException();
     }
