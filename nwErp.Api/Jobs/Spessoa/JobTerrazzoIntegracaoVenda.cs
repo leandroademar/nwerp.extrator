@@ -121,15 +121,17 @@ namespace nwErp.Api.Jobs
             }
             catch (SqlException ex)
             {
-                Console.WriteLine($"Erro ao conectar ao SQL Server: {ex.Message}");
-                Console.WriteLine(ex.ToString());
+                context.WriteLine($"Erro SqlException: {ex.Number} - {ex.Message}");
+                UtilidadeLogConsole.LogConsole($"Erro SqlException: {ex.Number} - {ex.Message}",
+                    nameof(GetControleCxAsync), UtilidadeLogConsole.TipoMensagem.Erro);
+                context.WriteLine(ex.ToString());
                 throw;
             }
                 
             catch (Exception ex)
             {
                 context.WriteLine($"Erro: {ex.Message}");
-                UtilidadeLogConsole.LogConsole($"Falha ao gravar CONTROLECX: {ex.StackTrace}",
+                UtilidadeLogConsole.LogConsole($"Falha ao gravar CONTROLECX: {ex.StackTrace} - {ex.Message}",
                     nameof(GetControleCxAsync), UtilidadeLogConsole.TipoMensagem.Erro);
                 cancellationToken.ThrowIfCancellationRequested();
             }
