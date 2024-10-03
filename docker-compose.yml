@@ -26,7 +26,7 @@ services:
       - "9999:9999"
       - "8085:8085"
     volumes:
-      - arq_data:/var/lib/postgresql/data
+      - ./arq_data:/var/lib/postgresql/data
 
   nwapi-app:
     image: nwerp-api:1.0.0
