@@ -65,8 +65,8 @@ COPY --from=build $ORACLE_HOME $ORACLE_HOME
 # Copiar arquivos publicados
 COPY --from=build /app/publish ./
 
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+COPY tnsnames.sh /app/tnsnames.sh
+#RUN chmod +x /app/entrypoint.sh
 # Expor a porta
 EXPOSE 8080
-ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh && dotnet nwErp.Api.dll"]
+ENTRYPOINT ["dotnet", "nwErp.Api.dll"]
