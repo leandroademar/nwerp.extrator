@@ -178,7 +178,7 @@ namespace nwErp.Api.Jobs
                 //    pcmovcx => pcmovcx.Nummovimentopdv == nota.ID_CONTARECEBER).FirstOrDefault();
 
                 // Preparar o caminho do arquivo XML
-                string caminholocal = nota.LocalXml.Replace("C:\\Mogo Gourmet Offline\\App\\XmlNotalFiscal\\", "M:\\");
+                string caminholocal = nota.LocalXml.Replace("C:\\Mogo Gourmet Offline\\App\\XmlNotalFiscal\\", "/mnt/xmlnotafiscal/");  
                 
                 if (!File.Exists(caminholocal))
                 {
@@ -210,8 +210,8 @@ namespace nwErp.Api.Jobs
                     // Modelo 55 = NFE - Nota fiscal eletronica / DANFE - A4
                     // Modelo 65 = NFCE - Nota fiscal consumidor eletronica / DANFCE - Cupom Fiscal
                     UtilidadeLogConsole.LogConsole($"Xml de uma NF-e Mod 55: {nota.Id}", nameof(ProcessarNotaFiscalAsync), UtilidadeLogConsole.TipoMensagem.Erro);
+                    return;
         
-
                 }
 
                 // Configuração da entidade PCPEDCECF
