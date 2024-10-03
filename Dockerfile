@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Configuração de Variáveis de Ambiente
 ENV ORACLE_HOME=/opt/oracle
-ENV LD_LIBRARY_PATH=$ORACLE_HOME/instantclient_19_24
+ENV LD_LIBRARY_PATH=$ORACLE_HOME/instantclient_19_23
 ENV PATH=$ORACLE_HOME:$PATH
 
 # Instalando Dependências Necessárias
@@ -36,14 +36,13 @@ RUN wget -q https://download.oracle.com/otn_software/linux/instantclient/1923000
     rm -f instantclient-*.zip
 
 # Instalando o Cliente SQL Server
-RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl -sSL https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
-    apt-get update && \
-    ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc-dev && \
-    rm -rf /var/lib/apt/lists/*
-
+#RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+#    curl -sSL https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+#    apt-get update && \
+#    ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc-dev && \
+#    rm -rf /var/lib/apt/lists/*
 # Atualizar PATH
-ENV PATH=$PATH:/opt/mssql-tools18/bin
+# ENV PATH=$PATH:/opt/mssql-tools18/bin
 
 # Copiar e restaurar dependências
 COPY *.sln ./
@@ -60,10 +59,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
 # Configuração de ambiente para o Oracle Instant Client
-ENV ORACLE_HOME=/opt/oracle/instantclient_19_24
+ENV ORACLE_HOME=/opt/oracle/instantclient_19_23
 ENV LD_LIBRARY_PATH=$ORACLE_HOME
 ENV PATH=$ORACLE_HOME:$PATH
-ENV PATH=$PATH:/opt/mssql-tools18/bin
 
 # Instalar dependências necessárias
 RUN apt-get update && apt-get install -y libaio1 libaio-dev && rm -rf /var/lib/apt/lists/*
@@ -77,9 +75,4 @@ COPY --from=build /app/publish ./
 # Expor a porta
 EXPOSE 8080
 
-# Configurar usuário não-root (opcional)
-# RUN useradd -m appuser
-# USER appuser
-
-# Comando de entrada
 ENTRYPOINT ["dotnet", "nwErp.Api.dll"]
