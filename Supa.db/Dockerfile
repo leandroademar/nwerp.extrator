@@ -308,4 +308,4 @@ COPY run-logrotate.sh /usr/local/bin/run-logrotate.sh
 
 ENTRYPOINT [ "/usr/bin/dumb-init" ]
 
-CMD [ "entrypoint.sh"]
+CMD [ "/usr/local/bin/entrypoint.sh"]
