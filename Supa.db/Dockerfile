@@ -168,7 +168,7 @@ RUN mkdir /etc/apt/keyrings \
     && apt-get clean && apt-get update \
     && apt-get install -y salt-minion
 
-ADD docker/all-in-one/etc/salt/minion /etc/salt/minion
+ADD etc/salt/minion /etc/salt/minion
 
 
 # Copy single binary dependencies
@@ -179,7 +179,7 @@ COPY --from=envoy /usr/local/bin/envoy /dist/
 COPY --from=adminapi /tmp/supabase-admin-api /dist/
 COPY --chown=root:root --from=adminmgr /tmp/admin-mgr /dist/
 COPY --from=exporter /tmp/postgres_exporter /opt/postgres_exporter/
-COPY docker/all-in-one/opt/postgres_exporter /opt/postgres_exporter/
+COPY opt/postgres_exporter /opt/postgres_exporter/
 
 # Configuring dangling symlinks for binaries
 RUN ln -s /data/opt/supabase-admin-api /opt/supabase-admin-api \
@@ -189,11 +189,11 @@ RUN ln -s /data/opt/supabase-admin-api /opt/supabase-admin-api \
 
 # Scripts for adminapi
 COPY ansible/files/admin_api_scripts /root
-COPY --chown=adminapi:adminapi docker/all-in-one/etc/adminapi /etc/adminapi
-COPY --chmod=644 docker/all-in-one/etc/sudoers.d /etc/sudoers.d/
+COPY --chown=adminapi:adminapi etc/adminapi /etc/adminapi
+COPY --chmod=644 etc/sudoers.d /etc/sudoers.d/
 
 # Script for pg_egress_collect
-COPY --chown=adminapi:adminapi docker/all-in-one/opt/pg_egress_collect /opt/pg_egress_collect
+COPY --chown=adminapi:adminapi opt/pg_egress_collect /opt/pg_egress_collect
 
 # Customizations for pgbouncer
 COPY etc/pgbouncer /etc/pgbouncer
@@ -201,22 +201,22 @@ COPY etc/pgbouncer-custom /etc/pgbouncer-custom
 COPY etc/tmpfiles.d /etc/tmpfiles.d
 
 # Customizations for postgres
-COPY --chown=postgres:postgres docker/all-in-one/etc/postgresql/pg_hba.conf /etc/postgresql/
-COPY --chown=postgres:postgres docker/all-in-one/etc/postgresql/logging.conf /etc/postgresql/
-COPY --chown=postgres:postgres docker/all-in-one/etc/postgresql-custom /etc/postgresql-custom
-COPY --chown=postgres:postgres docker/all-in-one/etc/postgresql.schema.sql /etc/postgresql.schema.sql
+COPY --chown=postgres:postgres etc/postgresql/pg_hba.conf /etc/postgresql/
+COPY --chown=postgres:postgres etc/postgresql/logging.conf /etc/postgresql/
+COPY --chown=postgres:postgres etc/postgresql-custom /etc/postgresql-custom
+COPY --chown=postgres:postgres etc/postgresql.schema.sql /etc/postgresql.schema.sql
 
 # Customizations for postgres_exporter
-COPY --chown=postgres:postgres docker/all-in-one/opt/postgres_exporter/queries.yml /opt/postgres_exporter/queries.yml
+COPY --chown=postgres:postgres opt/postgres_exporter/queries.yml /opt/postgres_exporter/queries.yml
 
 # Customizations for fail2ban
 COPY etc/fail2ban/filter.d /etc/fail2ban/filter.d/
 COPY etc/fail2ban/jail.d /etc/fail2ban/jail.d/
 
 # Customizations for postgrest
-COPY --chown=postgrest:postgrest docker/all-in-one/etc/postgrest/bootstrap.sh /etc/postgrest/bootstrap.sh
-COPY --chown=postgrest:postgrest docker/all-in-one/etc/postgrest/base.conf /etc/postgrest/base.conf
-COPY --chown=postgrest:postgrest docker/all-in-one/etc/postgrest/generated.conf /etc/postgrest/generated.conf
+COPY --chown=postgrest:postgrest etc/postgrest/bootstrap.sh /etc/postgrest/bootstrap.sh
+COPY --chown=postgrest:postgrest etc/postgrest/base.conf /etc/postgrest/base.conf
+COPY --chown=postgrest:postgrest etc/postgrest/generated.conf /etc/postgrest/generated.conf
 
 # Customizations for logrotate
 COPY etc/logrotate.d/walg.conf /etc/logrotate.d/walg.conf
@@ -236,13 +236,13 @@ COPY etc/kong/kong.conf /etc/kong/kong.conf
 COPY etc/kong/kong.yml /etc/kong/kong.yml
 
 # Customizations for vector
-COPY --chown=vector:vector docker/all-in-one/etc/vector/vector.yaml /etc/vector/vector.yaml
+COPY --chown=vector:vector etc/vector/vector.yaml /etc/vector/vector.yaml
 
 # Customizations for supervisor
 COPY etc/supervisor /etc/supervisor
 
 # Customizations for supa-shutdown
-COPY --chown=adminapi:adminapi docker/all-in-one/etc/supa-shutdown /etc/supa-shutdown
+COPY --chown=adminapi:adminapi etc/supa-shutdown /etc/supa-shutdown
 COPY configure-shim.sh /usr/local/bin/configure-shim.sh
 
 # Configure service ports
