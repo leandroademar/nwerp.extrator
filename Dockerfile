@@ -65,7 +65,7 @@ ENV LD_LIBRARY_PATH=$ORACLE_HOME
 ENV PATH=$ORACLE_HOME:$PATH
 
 # Instalar dependências necessárias
-RUN apt-get update && apt-get install -y libaio1 libssl3 libgssapi-krb5-2 libicu70 libaio-dev iputils-ping telnet && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libaio1 libssl3 libgssapi-krb5-2 libaio-dev iputils-ping telnet && rm -rf /var/lib/apt/lists/*
 
 # Copiar o Oracle Instant Client do build
 COPY --from=build $ORACLE_HOME $ORACLE_HOME
