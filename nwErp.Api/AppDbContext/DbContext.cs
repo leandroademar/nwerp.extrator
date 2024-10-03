@@ -17,7 +17,7 @@ public class DbContext : IDbContext, IDisposable
 
     public DbContext()
     {
-      this._connectionString = "Max Pool Size=300; Min Pool Size=0; Connection Lifetime=60; Connection Timeout=120; Incr Pool Size=1; Decr Pool Size=2; " + AppSettings.Get().GetConnectionString("DefaultConnection");
+      this._connectionString = "Max Pool Size=300; Min Pool Size=0; Connection Lifetime=60; Connection Timeout=120; Incr Pool Size=1; Decr Pool Size=2; " + AppSettings.Get().GetConnectionString("SqlServerConnection");
     }
 
     ~DbContext() => this.Dispose(false);

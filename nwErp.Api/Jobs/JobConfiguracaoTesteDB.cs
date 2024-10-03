@@ -20,8 +20,8 @@ namespace nwErp.Api.Jobs
         {
             _configuration = configuration;
             _winthorSession = winthorSession;
-            connectionTerrazzo = _configuration.GetConnectionString("terrazzo");
-            connectionWinthor = _configuration.GetConnectionString("winthor");
+            connectionTerrazzo = _configuration.GetConnectionString("SqlServerConnection");
+            connectionWinthor = _configuration.GetConnectionString("OracleDbConnection");
         }
 
         

@@ -32,8 +32,8 @@ namespace nwErp.Api.Jobs
         {
             _configuration = configuration;
             _persistencia = persistencia;
-            connectionTerrazzo = _configuration.GetConnectionString("terrazzo");
-            connectionWinthor = _configuration.GetConnectionString("winthor");
+            connectionTerrazzo = _configuration.GetConnectionString("SqlServerConnection");
+            connectionWinthor = _configuration.GetConnectionString("OracleDbConnection");
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
