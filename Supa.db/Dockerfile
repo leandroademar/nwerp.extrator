@@ -309,4 +309,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/supa-shutdown.sh /usr/l
 
 ENTRYPOINT [ "/usr/bin/dumb-init" ]
 
-CMD [ "/usr/local/bin/entrypoint.sh"]
+CMD [ "entrypoint.sh"]

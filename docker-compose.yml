@@ -1,12 +1,12 @@
 ﻿version: '3.8'
 
 services:
-  supa.db:
+  supa-db:
     image: nw/supa.db:1.0.0
     build:
       context: ./Supa.db
       dockerfile: Dockerfile
-    container_name: supa.db
+    container_name: supa-db
     environment:
       - POSTGRES_PASSWORD=postgres
       - JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long
@@ -19,7 +19,7 @@ services:
       - "5432:5432"
       - "8000:8000"
     volumes:
-      - ./Supa.db/data:/var/lib/postgresql/data
+      - .arq_data:/var/lib/postgresql/data
 
   nwapi-app:
     image: nwerp-api:1.0.0
