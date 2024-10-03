@@ -306,6 +306,6 @@ COPY postgres-entrypoint.sh /usr/local/bin/
 COPY shutdown.sh /usr/local/bin/supa-shutdown.sh
 COPY run-logrotate.sh /usr/local/bin/run-logrotate.sh
 
-ENTRYPOINT [ "/usr/bin/dumb-init" ]
+ENTRYPOINT [ "/usr/local/bin/dumb-init" ]
 
 CMD [ "entrypoint.sh"]
