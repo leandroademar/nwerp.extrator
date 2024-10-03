@@ -130,8 +130,9 @@ namespace nwErp.Api.Jobs
                 
             catch (Exception ex)
             {
-                context.WriteLine($"Erro: {ex.Message}");
-                UtilidadeLogConsole.LogConsole($"Falha ao gravar CONTROLECX: {ex.StackTrace} - {ex.Message}",
+                UtilidadeLogConsole.LogConsole($"ConnectionString:{connectionTerrazzo}",
+                    nameof(GetControleCxAsync), UtilidadeLogConsole.TipoMensagem.Atencao);
+                UtilidadeLogConsole.LogConsole($"Falha: {ex.StackTrace} - {ex.Message}",
                     nameof(GetControleCxAsync), UtilidadeLogConsole.TipoMensagem.Erro);
                 cancellationToken.ThrowIfCancellationRequested();
             }

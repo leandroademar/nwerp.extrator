@@ -1,4 +1,3 @@
-using DotNetEnv;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.MemoryStorage;
@@ -11,33 +10,28 @@ using nwErp.Api.Jobs;
 using nwErp.Api.Persistencia;
 using nwErp.Api.Persistencia.Oracle;
 using nwErp.Entidades;
-using Supabase; 
-
+using GlobalConfigurationExtensions = Hangfire.MemoryStorage.GlobalConfigurationExtensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar as Connection Strings
-builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddEnvironmentVariables();
+EnvironmentVariablesExtensions.AddEnvironmentVariables(JsonConfigurationExtensions.AddJsonFile(FileConfigurationExtensions.SetBasePath(builder.Configuration, Directory.GetCurrentDirectory()), "appsettings.json", optional: false, reloadOnChange: true));
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));
+MvcServiceCollectionExtensions.AddControllers(builder.Services);
+EndpointMetadataApiExplorerServiceCollectionExtensions.AddEndpointsApiExplorer(builder.Services);
+SwaggerGenServiceCollectionExtensions.AddSwaggerGen(builder.Services);
+OptionsConfigurationServiceCollectionExtensions.Configure<ConnectionStrings>(builder.Services, builder.Configuration.GetSection("ConnectionStrings"));
 
 // Registrar DbSessions
-builder.Services.AddSingleton<DbSessionTerrazzo>();
-builder.Services.AddSingleton<DbSessionWinthor>();
-builder.Services.AddSingleton<IHostedService,JobConfiguracaoTesteDB>();
+ServiceCollectionServiceExtensions.AddSingleton<DbSessionTerrazzo>(builder.Services);
+ServiceCollectionServiceExtensions.AddSingleton<DbSessionWinthor>(builder.Services);
 
 // Registrar IPersistencia como Singleton
-builder.Services.AddSingleton<IPersistencia>(provider => 
+ServiceCollectionServiceExtensions.AddSingleton(builder.Services, provider => 
 {
-    var configuration = provider.GetRequiredService<IConfiguration>();
-    var connectionString = configuration.GetConnectionString("OracleDbConnection");
+    var configuration = ServiceProviderServiceExtensions.GetRequiredService<IConfiguration>(provider);
+    var connectionString = ConfigurationExtensions.GetConnectionString(configuration, "OracleDbConnection");
     return PersistenciaOracle.NovaInstancia(connectionString);
 });
 
@@ -49,43 +43,41 @@ MemoryStorageOptions inMemory = new MemoryStorageOptions()
     FetchNextJobTimeout = TimeSpan.FromMinutes(2.0)
 };
         
-builder.Services.AddHangfire(config =>
+HangfireServiceCollectionExtensions.AddHangfire(builder.Services, config =>
 {
-    config.UseMemoryStorage(inMemory);
-    config.UseSimpleAssemblyNameTypeSerializer();
-    config.UseRecommendedSerializerSettings();
+    GlobalConfigurationExtensions.UseMemoryStorage(config, inMemory);
+    Hangfire.GlobalConfigurationExtensions.UseSimpleAssemblyNameTypeSerializer(config);
+    Hangfire.GlobalConfigurationExtensions.UseRecommendedSerializerSettings(config);
 });
         
-builder.Services.AddHangfireServer();
+HangfireServiceCollectionExtensions.AddHangfireServer(builder.Services);
 
 var jobsToRun = builder.Configuration.GetSection("JobsToRun").Get<List<string>>();
-if (jobsToRun != null)
+foreach (var jobName in jobsToRun)
 {
-    foreach (var jobName in jobsToRun)
+    var jobTypeName = jobName.Trim();
+    var jobType = Type.GetType($"nwErp.Api.Jobs.{jobTypeName}");
+    if (jobType != null)
     {
-        var jobTypeName = jobName.Trim();
-        var jobType = Type.GetType($"nwErp.Api.Jobs.{jobTypeName}");
-        if (jobType != null)
-        {
-            var hostedServiceType = typeof(IHostedService);
-            builder.Services.AddSingleton(hostedServiceType, jobType);
-        }
-        else
-        {
-            Console.WriteLine($"Job {jobTypeName} não encontrado.");
-        }
+        //builder.Services.AddHostedService(jobType);
+        var hostedServiceType = typeof(IHostedService);
+        builder.Services.AddSingleton(hostedServiceType, jobType);
+    }
+    else
+    {
+        Console.WriteLine($"Job {jobTypeName} não encontrado.");
     }
 }
 
 
 var app = builder.Build();
-app.UseSwagger();
-app.UseSwaggerUI();
+SwaggerBuilderExtensions.UseSwagger(app);
+SwaggerUIBuilderExtensions.UseSwaggerUI(app);
 
-app.UseHangfireDashboard("/hangfire", new DashboardOptions
+HangfireApplicationBuilderExtensions.UseHangfireDashboard(app, "/hangfire", new DashboardOptions
 {
     Authorization = new[] { new HangFireDashboard.MyAuthorizationFilter() }
 });
         
-app.MapControllers();
+ControllerEndpointRouteBuilderExtensions.MapControllers(app);
 app.Run();
