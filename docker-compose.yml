@@ -2,6 +2,7 @@
 
 services:
   nwapi-app:
+    image: nwerpapi:1.0.0
     build:
       context: .
       dockerfile: Dockerfile
