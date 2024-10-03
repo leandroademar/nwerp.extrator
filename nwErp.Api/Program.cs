@@ -10,17 +10,25 @@ using nwErp.Api.Configuration;
 using nwErp.Api.Jobs;
 using nwErp.Api.Persistencia;
 using nwErp.Api.Persistencia.Oracle;
+using nwErp.Entidades;
 using Supabase; 
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar as Connection Strings
+var configuration = builder.Configuration;
+
+configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables(); // Adiciona as variáveis de ambiente
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));
-
-Env.Load();
+builder.Services.Configure<ConnectionStrings>(configuration.GetSection("ConnectionStrings"));
 
 // Registrar DbSessions
 builder.Services.AddSingleton<DbSessionTerrazzo>();
@@ -52,25 +60,7 @@ builder.Services.AddHangfire(config =>
         
 builder.Services.AddHangfireServer();
 
-
-// Configurar o Supabase
-var supabaseUrl = Env.GetString("SUPABASE_URL");
-var supabaseKey = Env.GetString("SUPABASE_KEY");
-
-var supabaseOptions = new SupabaseOptions
-{
-    // Defina as opções necessárias aqui
-};
-
-var supabaseClient = new Supabase.Client(supabaseUrl, supabaseKey, supabaseOptions);
-
-// Inicialize o cliente Supabase de forma assíncrona
-await supabaseClient.InitializeAsync();
-
-// Registrar o Supabase.Client como Singleton
-builder.Services.AddSingleton(supabaseClient);
-
-var jobsToRun = Env.GetString("JOB_RUN")?.Split(',');
+var jobsToRun = configuration.GetSection("JobsToRun").Get<List<string>>();
 if (jobsToRun != null)
 {
     foreach (var jobName in jobsToRun)
