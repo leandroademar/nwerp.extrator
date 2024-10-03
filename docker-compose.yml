@@ -1,26 +1,41 @@
 ﻿version: '3.8'
 
 services:
+  supa.db:
+    image: nw/supa.db:1.0.0
+    build:
+      context: ./Supa.db
+      dockerfile: Dockerfile
+    container_name: supabase.db
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long
+      - ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE
+      - SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q
+      - ADMIN_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic3VwYWJhc2VfYWRtaW4iLCJpc3MiOiJzdXBhYmFzZS1kZW1vIiwiaWF0IjoxNjQxNzY5MjAwLCJleHAiOjE3OTk1MzU2MDB9.Y9mSNVuTw2TdfryoaqM5wySvwQemGGWfSe9ixcklVfM
+      - DATA_VOLUME_MOUNTPOINT=/data
+      - MACHINE_TYPE=shared_cpu_1x_512m
+    ports:
+      - "5432:5432"
+      - "8000:8000"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
   nwapi-app:
     image: nwerp-api:1.0.0
     build:
-      context: .
+      context: ./nwErp.Api
       dockerfile: Dockerfile
     container_name: nwerp.api
     environment:
-      - ConnectionStrings__OracleDbConnection=User Id=${ORACLE_DB_USER};Password=${ORACLE_DB_PASSWORD};Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_DB_HOST})(PORT=${ORACLE_DB_PORT})))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DB_SERVICE})))      
+      - ConnectionStrings__OracleDbConnection=User Id=${ORACLE_DB_USER};Password=${ORACLE_DB_PASSWORD};Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_DB_HOST})(PORT=${ORACLE_DB_PORT})))(CONNECT_DATA=(SERVICE_NAME=${ORACLE_DB_SERVICE})))
       - ConnectionStrings__SqlServerConnection=Server=${SQL_SERVER_HOST};Database=${SQL_SERVER_DB};User Id=${SQL_SERVER_USER};Password=${SQL_SERVER_PASSWORD};Encrypt=False;TrustServerCertificate=True;
       - JobsToRun__0=${JOB_RUN_0}
       - ASPNETCORE_ENVIRONMENT=Development
       - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=${DOTNET_SYSTEM_GLOBALIZATION_INVARIANT}
       - TZ=${TZ}
-      - LANG=${LANG}    
+      - LANG=${LANG}
     ports:
       - "${API_PORT}:8080"
     volumes:
-      # Usando a letra da unidade (Windows)
-      - 'M:\:/mnt/xmlnotafiscal/'
-      # Ou usando o caminho UNC (Windows)
-      # - "\\\\servidor\\compartilhamento:/app/unidade_rede"
-      # Para Linux ou macOS
-      # - '/mnt/unidade_rede:/app/unidade_rede'
+      - 'M:\:/mnt/xmlnotafiscal'
