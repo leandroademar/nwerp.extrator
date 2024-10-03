@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 # Criação do arquivo tnsnames.ora
 echo '
 '"$ORACLE_DB"' =
@@ -12,4 +14,7 @@ echo '
   )
 ' > $ORACLE_HOME/network/admin/tnsnames.ora
 
-echo "Arquivo tnsnames.ora criado com sucesso em /opt/oracle/instantclient_19_24/network/admin/"
+echo "Arquivo tnsnames.ora criado com sucesso em $ORACLE_HOME/network/admin/"
+
+# Executa o comando original (inicia a aplicação)
+exec "$@"

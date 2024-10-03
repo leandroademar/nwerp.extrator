@@ -17,3 +17,10 @@ services:
       - LANG=${LANG}    
     ports:
       - "${API_PORT}:8080"
+    volumes:
+      # Usando a letra da unidade (Windows)
+      - 'M:\:/mnt/xmlnotafiscal/'
+      # Ou usando o caminho UNC (Windows)
+      # - "\\\\servidor\\compartilhamento:/app/unidade_rede"
+      # Para Linux ou macOS
+      # - '/mnt/unidade_rede:/app/unidade_rede'

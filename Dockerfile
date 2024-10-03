@@ -36,21 +36,13 @@ RUN wget -q https://download.oracle.com/otn_software/linux/instantclient/1923000
     unzip -o -q instantclient-sdk-linux.x64-19.23.0.0.0dbru.zip -d $ORACLE_HOME && \
     rm -f instantclient-*.zip
 
-# Instalando o Cliente SQL Server
-#RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-#    curl -sSL https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
-#    apt-get update && \
-#    ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc-dev && \
-#    rm -rf /var/lib/apt/lists/*
-# Atualizar PATH
-# ENV PATH=$PATH:/opt/mssql-tools18/bin
-
 # Copiar e restaurar dependências
 COPY *.sln ./
 COPY nwErp.Api/*.csproj ./nwErp.Api/
+COPY nwErp.Api/Scripts ./nwErp.Api/Scripts
+COPY . ./
 RUN dotnet restore
 
-# Copiar o restante do código e publicar
 COPY . .
 WORKDIR /app/nwErp.Api
 RUN dotnet publish -c Release -o /app/publish
@@ -73,7 +65,9 @@ COPY --from=build $ORACLE_HOME $ORACLE_HOME
 # Copiar arquivos publicados
 COPY --from=build /app/publish ./
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 # Expor a porta
 EXPOSE 8080
-
-ENTRYPOINT ["dotnet", "nwErp.Api.dll"]
+ENTRYPOINT["/entrypoint.sh"]
+CMD ["dotnet", "nwErp.Api.dll"]

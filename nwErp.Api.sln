@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nwErp", "nwErp", "{01137CD2
 		.dockerignore = .dockerignore
 		.env = .env
 		env.example = env.example
+		entrypoint.sh = entrypoint.sh
 	EndProjectSection
 EndProject
 Global
